@@ -29,6 +29,7 @@ const ExcelJS = require('exceljs');
     ]
 
     let pages = []
+    // let typeSet = new Set()
     for (let i = 0, len = files.length; i < len; i++) {
         let pdfFile = path.join(dirPath, files[i])
         let parseJson = await readPDF(pdfFile)
@@ -38,6 +39,9 @@ const ExcelJS = require('exceljs');
         // console.log(textBoxes)
         // fs.writeFile('result.json', JSON.stringify(textBoxes))
         // fs.writeFile('temp.html',makeHTML(textBoxes))
+
+        // typeSet.add(getBillType(textBoxes))
+        // continue;
         let obj = getPageData(textBoxes)
         obj.index = i+1
         pages.push(obj)
@@ -45,7 +49,7 @@ const ExcelJS = require('exceljs');
         // break;
         worksheet.addRow(obj);
     }
-
+    // console.log(typeSet)
 
     await workbook.xlsx.writeFile("result.xlsx");
 })().catch(e => console.error(e)).finally(() => {
@@ -66,7 +70,7 @@ const BillType = {
 function getBillType(textBoxes){
     // console.log(textBoxes)
     let result= textBoxes.find(item => /普通发票/.test(item.t))
-    return result ? result.t : ''
+    return result ? result.t.trim() : ''
 }
 
 function getPageData(textBoxes) {
